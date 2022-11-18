@@ -1,13 +1,12 @@
-import React, { useEffect } from "react"
+import React from "react"
 import { Screen2 } from "../Screen2";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react-native"
+import { fireEvent, render, screen } from "@testing-library/react-native"
 import { getDistance } from "geolib";
-import * as Location from "expo-location"
-import currentDistance from "../../component/getLocation";
-import { check } from "react-native-permissions";
+import { Audio } from 'expo-av';
 
+describe("<Screen2 />", () => {
 
-describe("<Screen2 />", async () => {
+    var distance;
 
     it('Render default elements', () => {
         const { getByTestId, getByPlaceholderText } = render(<Screen2 />);
@@ -16,16 +15,33 @@ describe("<Screen2 />", async () => {
         getByPlaceholderText('Enter latitude');
         getByPlaceholderText('Enter Longitude');
 
-        expect(getByPlaceholderText('Enter latitude')).not.toBeNull()
-        expect(getByPlaceholderText('Enter Longitude')).not.toBeNull()
     });
 
+    it('Show empty field message', async () => {
+        const { getByPlaceholderText } = render(<Screen2 />);
+
+        expect(getByPlaceholderText('Enter latitude')).not.toBeNull()
+        expect(getByPlaceholderText('Enter Longitude')).not.toBeNull()
+
+    })
+
     it('Show invalid inputs messages', async () => {
+        const { findByPlaceholderText } = render(<Screen2 />);
 
+        const validInput = new RegExp(/^\d*\.?\d*$/)
 
+        const letitude = await findByPlaceholderText("Enter latitude")
+        const longitude = await findByPlaceholderText("Enter Longitude")
+        const lat = letitude.props.value
+        const long = longitude.props.value
+
+        expect(lat).toMatch(validInput)
+        expect(long).toMatch(validInput)
+
+    });
+
+    it('Show valid distance', async () => {
         const { getByTestId, getByPlaceholderText } = render(<Screen2 />);
-        // const loc = await currentDistance()
-        // console.log('===================================================================', loc);
 
         const lat = 37.4220936
         const long = -122.083922
@@ -38,21 +54,15 @@ describe("<Screen2 />", async () => {
         const loc1 = test.props.value
         const long1 = test1.props.value
 
-        // const dis = getDistance(
-        //     { latitude: lat, longitude: long },
-        //     { latitude: loc1, longitude: long1 }
-        // );
-        // const loc = Location.getCurrentPositionAsync({})
-        // expect((await loc)).toHaveBeenCalledTimes(1)
+        const dis = getDistance(
+            { latitude: lat, longitude: long },
+            { latitude: loc1, longitude: long1 }
+        );
+        distance = dis;
+        expect(dis).not.toBeNaN();
 
-        // console.log("Diffrence----------", (await loc));
+    });
 
-        // await waitFor(() => {
-        // expect(check).toHaveBeenCalledTimes(1)
-        // expect(Location.getCurrentPositionAsync({})).toHaveBeenCalledTimes(1)
-        // })
-
-    })
 })
 
 

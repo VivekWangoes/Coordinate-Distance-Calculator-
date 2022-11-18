@@ -1,7 +1,5 @@
 import { jest } from "@jest/globals"
 
-jest.mock("expo-location");
-
 jest.mock("react-native-permissions", () =>
     require("react-native-permissions/mock")
 )

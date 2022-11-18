@@ -1,34 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { View, Alert, TextInput } from "react-native";
-import { NativeBaseProvider, Text, Box, FormControl, Stack, Input, WarningOutlineIcon, Button } from "native-base";
+import { NativeBaseProvider, Text, Box, FormControl, Stack, Input, Button } from "native-base";
 import { getDistance } from "geolib";
 import { Audio } from 'expo-av';
 import * as Location from "expo-location"
-
-import currentDistance from "../../component/getLocation";
 
 const inset = {
     frame: { x: 0, y: 0, width: 0, height: 0 },
     insets: { top: 0, left: 0, right: 0, bottom: 0 },
 };
 
-export const Screen2 = ({ route }) => {
+export const Screen2 = () => {
 
     const [location, setLocation] = useState(null);
-    const [currentLoc, setCurrentLoc] = useState(null)
-    const [sound, setSound] = useState();
+
     const [distance, setDistance] = useState();
-    const [lat, setLat] = useState('')
-    const [long, setLong] = useState('')
+    const [lat, setLat] = useState('22.245678')
+    const [long, setLong] = useState('75.245678')
 
     const RefreshInterval = 5000;
-
     const getLocation = async () => {
         let currentLocation = await Location.getCurrentPositionAsync({});
         setLocation(currentLocation.coords);
-        setCurrentLoc(currentLocation.coords)
-
-
     }
 
     useEffect(() => {
@@ -36,16 +28,13 @@ export const Screen2 = ({ route }) => {
     }, [])
 
     async function playSound() {
-
         try {
             await Audio.setIsEnabledAsync(true);
             await Audio.setAudioModeAsync({
                 staysActiveInBackground: true,
-                // interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
                 shouldDuckAndroid: true,
                 playThroughEarpieceAndroid: true,
                 allowsRecordingIOS: true,
-                // interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
                 playsInSilentModeIOS: true,
             });
             const { sound } = await Audio.Sound.createAsync(require('../../Assets/mp3/beep.mp3'));
@@ -63,7 +52,6 @@ export const Screen2 = ({ route }) => {
     useEffect(() => {
         const interval = setInterval(async () => {
             if (distance >= 1000) {
-                console.log('Playing Sound');
                 playSound()
             } else {
                 const { sound } = await Audio.Sound.createAsync(require('../../Assets/mp3/beep.mp3'));
@@ -75,21 +63,20 @@ export const Screen2 = ({ route }) => {
     }, [distance]);
 
     const handleSubmit = async () => {
-        console.log('handle');
         var dis = getDistance(
             { latitude: location.latitude, longitude: location.longitude },
-            // { latitude: 22.7196, longitude: 75.8577 },
             { latitude: lat, longitude: long }
         );
         alert('Distance between source to destination' + ('test', dis))
-        // dispatch(getRootDistance(dis))
         setDistance(dis)
     }
 
     return (
         <NativeBaseProvider initialWindowMetrics={inset}>
-            {/* <Text testID="dis">distance</Text> */}
-            <Box alignItems="center" marginTop="50%">
+            <Box alignItems="center" marginTop="30%">
+                <Text fontSize="2xl">Destination</Text>
+            </Box>
+            <Box alignItems="center" marginTop="20%">
                 <Box w="100%" maxWidth="340px">
                     <FormControl>
                         <Stack mx="4">
@@ -99,6 +86,7 @@ export const Screen2 = ({ route }) => {
                                 value={lat}
                                 testID='latitude'
                                 onChangeText={(t) => setLat(t)}
+                                keyboardType="decimal-pad"
                                 backgroundColor="#fff" />
                         </Stack>
                     </FormControl>
@@ -111,6 +99,7 @@ export const Screen2 = ({ route }) => {
                                 placeholder="Enter Longitude"
                                 value={long}
                                 onChangeText={(t) => setLong(t)}
+                                keyboardType="decimal-pad"
                                 backgroundColor="#fff" />
                         </Stack>
                     </FormControl>

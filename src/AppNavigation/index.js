@@ -1,4 +1,3 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
@@ -11,7 +10,6 @@ const Stack = createNativeStackNavigator();
 function AppNavigation() {
 
     const [permission, setPermission] = useState(false)
-    console.log('permi==========', permission);
     useEffect(() => {
         const unsubscribe = getPermission()
         return () => unsubscribe
@@ -33,14 +31,8 @@ function AppNavigation() {
     return (
         <NavigationContainer>
             <Stack.Navigator screenOptions={{ headerShown: false }}>
-                {/* {
-                    !permission ? */}
-
                 <Stack.Screen name="Screen1" component={Screen1} />
-                {/* : */}
                 <Stack.Screen name="Screen2" component={Screen2} />
-                {/* } */}
-
             </Stack.Navigator>
         </NavigationContainer>
     )

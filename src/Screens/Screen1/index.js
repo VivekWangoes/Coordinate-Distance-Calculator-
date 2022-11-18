@@ -2,7 +2,6 @@ import { Box, Button, Heading, NativeBaseProvider } from "native-base";
 import React, { useState } from "react";
 import * as Location from "expo-location"
 
-
 export const Screen1 = (props) => {
 
     const [errorMsg, setErrorMsg] = useState(null);
